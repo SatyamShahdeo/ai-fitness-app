@@ -1,0 +1,30 @@
+# Dependencies
+node_modules
+/node_modules
+client/node_modules/
+server/node_modules/
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*
+*.pem
+credentials.json
+secret*
+*.key
+
+# Build and cache
+build/
+dist/
+.cache/
+coverage/
+client/build/
+server/build/
+*.pdf
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log

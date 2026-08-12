@@ -1,5 +1,7 @@
 # AI Fitness Tracker
 
+**Live Demo:** [https://ai-fitness-app-ruddy.vercel.app](https://ai-fitness-app-ruddy.vercel.app)
+
 The AI Fitness Tracker is a modern, full-stack web application designed to help users monitor their daily nutritional intake and physical activities. By integrating AI-powered food image analysis, it simplifies the process of logging meals and estimating calories, providing users with an intuitive and seamless fitness journey.
 
 ## Features

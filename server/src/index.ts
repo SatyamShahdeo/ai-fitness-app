@@ -17,26 +17,34 @@ export default {
         .findOne({ where: { type: 'authenticated' } });
 
       if (authenticatedRole) {
-        // Enable update permission for users-permissions.user.update
-        // In Strapi v4/v5, permissions are stored in the plugin::users-permissions.permission table
-        // and its existence (linked to the role) dictates if it's enabled.
-        const existingPermission = await strapi.db.query('plugin::users-permissions.permission').findOne({
-          where: {
-            role: authenticatedRole.id,
-            action: 'plugin::users-permissions.user.update',
-          }
-        });
+        const requiredPermissions = [
+          'plugin::users-permissions.user.update',
+          'api::food-log.food-log.find',
+          'api::food-log.food-log.create',
+          'api::food-log.food-log.delete',
+          'api::activity-log.activity-log.find',
+          'api::activity-log.activity-log.create',
+          'api::activity-log.activity-log.delete',
+          'api::image-analysis.image-analysis.analyze',
+        ];
 
-        if (!existingPermission) {
-          await strapi.db.query('plugin::users-permissions.permission').create({
-            data: {
+        for (const action of requiredPermissions) {
+          const existingPermission = await strapi.db.query('plugin::users-permissions.permission').findOne({
+            where: {
               role: authenticatedRole.id,
-              action: 'plugin::users-permissions.user.update',
+              action,
             }
           });
-          strapi.log.info('Successfully created update permission for authenticated role');
-        } else {
-          strapi.log.info('Update permission for authenticated role already exists');
+
+          if (!existingPermission) {
+            await strapi.db.query('plugin::users-permissions.permission').create({
+              data: {
+                role: authenticatedRole.id,
+                action,
+              }
+            });
+            strapi.log.info(`Successfully created permission: ${action}`);
+          }
         }
       }
     } catch (error) {

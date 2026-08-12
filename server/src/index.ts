@@ -9,12 +9,27 @@ export default {
    */
   register(/* { strapi }: { strapi: Core.Strapi } */) {},
 
-  /**
-   * An asynchronous bootstrap function that runs before
-   * your application gets started.
-   *
-   * This gives you an opportunity to set up your data model,
-   * run jobs, or perform some special logic.
-   */
-  bootstrap(/* { strapi }: { strapi: Core.Strapi } */) {},
+  async bootstrap({ strapi }) {
+    try {
+      // Find the authenticated role
+      const authenticatedRole = await strapi
+        .query('plugin::users-permissions.role')
+        .findOne({ where: { type: 'authenticated' } });
+
+      if (authenticatedRole) {
+        // Enable update permission for users-permissions.user.update
+        await strapi.query('plugin::users-permissions.permission').updateMany({
+          where: {
+            role: authenticatedRole.id,
+            action: 'plugin::users-permissions.user.update',
+          },
+          data: {
+            enabled: true,
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Error in bootstrap setting permissions:', error);
+    }
+  },
 };
